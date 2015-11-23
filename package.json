@@ -1,0 +1,25 @@
+{
+  "name": "@modulus/logger",
+  "version": "0.0.0",
+  "description": "Winston wrapper with simplified interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onmodulus/logger.git"
+  },
+  "keywords": [
+    "logs",
+    "logger",
+    "exceptions",
+    "debug"
+  ],
+  "author": "Jack Boberg <jack@modulus.io> (https://modulus.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/onmodulus/logger/issues"
+  },
+  "homepage": "https://github.com/onmodulus/logger#readme"
+}
