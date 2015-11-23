@@ -26,6 +26,7 @@
     "winston": "2.1.1"
   },
   "devDependencies": {
-    "@modulus/standard": "*"
+    "@modulus/standard": "*",
+    "lab": "~7.3.0"
   }
 }
