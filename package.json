@@ -4,7 +4,10 @@
   "description": "Winston wrapper with simplified interface",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "mod-standard",
+    "test": "lab -c",
+    "posttest": "npm run lint",
+    "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info"
   },
   "repository": {
     "type": "git",
