@@ -31,6 +31,7 @@
   "devDependencies": {
     "@modulus/standard": "*",
     "code": "~2.0.1",
-    "lab": "~7.3.0"
+    "lab": "~7.3.0",
+    "sinon": "~1.17.2"
   }
 }
