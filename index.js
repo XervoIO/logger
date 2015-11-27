@@ -1,21 +1,16 @@
-const Winston = require('winston');
+const Assert = require('assert');
 
-const Formatter = require('./lib/formatter');
+const Logger = require('./lib/logger');
 
-const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+function isString(str) {
+  return typeof str === 'string';
+}
 
 module.exports = function (namespace) {
-  return new Winston.Logger({
-    transports: [
-      new Winston.transports.Console({
-        level: LOG_LEVEL,
-        timestamp: function () {
-          return new Date().toISOString();
-        },
-        formatter: Formatter.bind(null, namespace),
-        handleExceptions: true,
-        humanReadableUnhandledException: true
-      })
-    ]
-  });
+  var level;
+
+  Assert(namespace && isString(namespace), 'must provide namespace');
+  level = process.env.LOG_LEVEL || 'info' ; // eslint-disable-line no-process-env
+
+  return Logger(namespace, level);
 };
