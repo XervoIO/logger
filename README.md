@@ -1,5 +1,11 @@
 # Modulus logger
 
+[![version](https://img.shields.io/npm/v/@modulus/logger.svg?style=flat-square)][version]
+[![build](https://img.shields.io/travis/onmodulus/logger.svg?style=flat-square)][build]
+[![coverage](https://img.shields.io/codeclimate/coverage/github/onmodulus/logger.svg?style=flat-square)][coverage]
+[![code climate](https://img.shields.io/codeclimate/github/onmodulus/logger.svg?style=flat-square)][climate]
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
+
 A Winston wrapper with a simplified interface.
 
 ## Install
@@ -33,3 +39,9 @@ exited. There is no need to add an additional handler.
 
 [winston]: https://www.npmjs.com/package/winston
 [debug]: https://www.npmjs.com/package/debug
+
+[version]: https://www.npmjs.com/package/@modulus/logger
+[build]: https://travis-ci.org/onmodulus/logger
+[coverage]: https://codeclimate.com/github/onmodulus/logger/coverage
+[climate]: https://codeclimate.com/github/onmodulus/logger/code
+[license]: https://raw.githubusercontent.com/onmodulus/logger/master/LICENSE
