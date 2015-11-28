@@ -1,6 +1,6 @@
 const Assert = require('assert');
 
-const Logger = require('./lib/logger');
+const Factory = require('./lib/factory');
 
 function isString(str) {
   return typeof str === 'string';
@@ -12,5 +12,5 @@ module.exports = function (namespace) {
   Assert(namespace && isString(namespace), 'must provide namespace');
   level = process.env.LOG_LEVEL || 'info' ; // eslint-disable-line no-process-env
 
-  return Logger(namespace, level);
+  return Factory(namespace, level);
 };

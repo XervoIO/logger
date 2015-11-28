@@ -1,94 +1,90 @@
 const Code = require('code');
 const Lab = require('lab');
-const StdMocks = require('std-mocks');
+const Proxyquire = require('proxyquire');
+const Sinon = require('sinon');
 
-const Logger = require('../lib/logger');
+var mock = { logger: true };
+var factory = Sinon.stub().returns(mock);
+const Logger = Proxyquire('..', {
+  './lib/factory': factory
+});
 
 var lab = exports.lab = Lab.script();
 var describe = lab.describe;
 var it = lab.it;
 var beforeEach = lab.beforeEach;
+var afterEach = lab.afterEach;
 var expect = Code.expect;
 
 describe('Logger', function () {
-  var logger;
-
-  beforeEach(function (done) {
-    logger = Logger('test', 'debug');
-    done();
-  });
+  var fn;
 
   it('exports a function', function (done) {
     expect(Logger).to.be.a.function();
     done();
   });
 
-  it('returns a logger instance', function (done) {
-    ['error', 'warn', 'info', 'debug'].forEach(function (level) {
-      expect(logger[level]).to.be.a.function();
+  it('requires a namespace', function (done) {
+    fn = function () {
+      Logger();
+    }
+
+    expect(fn).to.throw('must provide namespace');
+    done();
+  });
+
+  it('namespace must be string', function (done) {
+    [void 0, null, [], {}, Function.prototype].forEach(function (el) {
+      fn = function () {
+        Logger(el);
+      }
+      expect(fn).to.throw('must provide namespace');
     });
     done();
   });
 
-  describe('instance methods', function () {
-    var stdio;
+  it('returns a logger instance', function (done) {
+    var instance = Logger('test');
+    expect(factory.calledWith('test')).to.be.true();
+    expect(instance).to.equal(mock);
+    done();
+  });
 
-    describe('info', function () {
+  describe('log level', function () {
+    var level;
+
+    beforeEach(function (done) {
+      level = process.env.LOG_LEVEL;
+      done();
+    });
+
+    afterEach(function (done) {
+      process.env.LOG_LEVEL = level;
+      done();
+    });
+
+    describe('when environment variable is not present', function () {
       beforeEach(function (done) {
-        StdMocks.use();
-        logger.info('message');
-        StdMocks.restore();
-        stdio = StdMocks.flush();
+        delete process.env.LOG_LEVEL;
         done();
       });
 
-      it('prints to stdout', function (done) {
-        expect(stdio.stdout.pop()).to.contain('INFO test message');
+      it('defaults to "info"', function (done) {
+        Logger('level');
+        expect(factory.calledWith('level', 'info')).to.be.true();
         done();
       });
     });
 
-    describe('warn', function () {
+    describe('when environment variable is present', function () {
       beforeEach(function (done) {
-        StdMocks.use();
-        logger.warn('message');
-        StdMocks.restore();
-        stdio = StdMocks.flush();
+        process.env.LOG_LEVEL = 'test';
         done();
       });
 
-      it('prints to stdout', function (done) {
-        expect(stdio.stdout.pop()).to.contain('WARN test message');
-        done();
-      });
-    });
-
-    describe('error', function () {
-      beforeEach(function (done) {
-        StdMocks.use();
-        logger.error('message');
-        StdMocks.restore();
-        stdio = StdMocks.flush();
-        done();
-      });
-
-      it('prints to stderr', function (done) {
-        expect(stdio.stderr.pop()).to.contain('ERROR test message');
-        done();
-      });
-    });
-
-    describe('debug', function () {
-      beforeEach(function (done) {
-        StdMocks.use();
-        logger.debug('message');
-        StdMocks.restore();
-        stdio = StdMocks.flush();
-        done();
-      });
-
-      it('prints to stderr', function (done) {
-        expect(stdio.stderr.pop()).to.contain('DEBUG test message');
+      it('uses it', function (done) {
+        Logger('level');
+        expect(factory.calledWith('level', 'test')).to.be.true();
         done();
       });
     });
