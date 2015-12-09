@@ -3,13 +3,14 @@ node_js:
   - '0.10'
   - '0.12'
   - '4'
+  - '5'
 before_install:
   - 'npm install npm@latest -g && npm install codeclimate-test-reporter -g'
 addons:
   code_climate:
     repo_token: 40baeb8c7bff807e82d2a6b7018c9bfef84af69acc29660dc40fa817c62b3aee
 after_script:
-  - 'npm run gen-coverage && cat coverage/lcov.info | codeclimate-test-reporter'
+  - 'npm run coverage && cat coverage/lcov.info | codeclimate-test-reporter'
 notifications:
   slack:
     secure: PGdsKStC7uOM9LRZzXun/z5IQqhV39/agmi8Bpqa04NqcS6kdKkRrKyhPvw49MX9FspzqklUjJfhYQBJ5WEXUqUc7VFl4xT7TaKmujDMeH4w6DzpesV17iM4ydklpbxcw7VOjIPckXOI3FWQlXbSDmgrAk997VBDGzg3qSOYBQQ=
