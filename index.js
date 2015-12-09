@@ -1,36 +1,16 @@
-const Winston = require('winston');
+const Assert = require('assert');
 
-const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+const Factory = require('./lib/factory');
 
-function getFormatter(namespace) {
-  return function (options) {
-    var out = [
-      options.timestamp(),
-      options.level.toUpperCase(),
-      namespace
-    ];
-
-    if (options.message) out.push(options.message);
-    if (options.meta && Object.keys(options.meta).length) {
-      out.push(JSON.stringify(options.meta));
-    }
-
-    return out.join(' ');
-  }
+function isString(str) {
+  return typeof str === 'string';
 }
 
 module.exports = function (namespace) {
-  return new Winston.Logger({
-    transports: [
-      new Winston.transports.Console({
-        level: LOG_LEVEL,
-        timestamp: function () {
-          return new Date().toISOString();
-        },
-        formatter: getFormatter(namespace),
-        handleExceptions: true,
-        humanReadableUnhandledException: true
-      })
-    ]
-  });
+  var level;
+
+  Assert(namespace && isString(namespace), 'must provide namespace');
+  level = process.env.LOG_LEVEL || 'info' ; // eslint-disable-line no-process-env
+
+  return Factory(namespace, level);
 };
