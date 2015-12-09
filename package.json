@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "@modulus/standard": "*",
-    "code": "~2.0.1",
-    "lab": "~7.3.0",
+    "code": "~1.5.0",
+    "lab": "~5.18.1",
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
     "std-mocks": "~1.0.0"
