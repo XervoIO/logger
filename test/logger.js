@@ -54,18 +54,18 @@ describe('Logger', function () {
     var level;
 
     beforeEach(function (done) {
-      level = process.env.LOG_LEVEL;
+      level = process.env.LOG_LEVEL; // eslint-disable-line no-process-env
       done();
     });
 
     afterEach(function (done) {
-      process.env.LOG_LEVEL = level;
+      process.env.LOG_LEVEL = level; // eslint-disable-line no-process-env
       done();
     });
 
     describe('when environment variable is not present', function () {
       beforeEach(function (done) {
-        delete process.env.LOG_LEVEL;
+        delete process.env.LOG_LEVEL; // eslint-disable-line no-process-env
         done();
       });
 
@@ -78,7 +78,7 @@ describe('Logger', function () {
 
     describe('when environment variable is present', function () {
       beforeEach(function (done) {
-        process.env.LOG_LEVEL = 'test';
+        process.env.LOG_LEVEL = 'test'; // eslint-disable-line no-process-env
         done();
       });
 
