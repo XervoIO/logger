@@ -5,34 +5,10 @@ const Winston = require('winston');
 
 const Factory = require('./lib/factory');
 
-const EXCEPTION_LOG = process.env.EXCEPTION_LOG; // eslint-disable-line no-process-env
-var exitOnError = false;
+var exceptionLogger;
 
 function isString(str) {
   return typeof str === 'string';
-}
-
-if (isString(EXCEPTION_LOG)) {
-  try {
-    // ensure file is writeable
-    /* eslint-disable no-sync */
-    if (FS.accessSync) FS.accessSync(EXCEPTION_LOG, FS.F_OK | FS.W_OK);
-    else FS.appendFileSync(EXCEPTION_LOG, '');
-    /* eslint-enable no-sync */
-
-    new Winston.Logger({
-      transports: [
-        new Winston.transports.File({
-          level: 'error',
-          filename: EXCEPTION_LOG,
-          handleExceptions: true,
-          humanReadableUnhandledException: true
-        })
-      ]
-    });
-  } catch (e) {
-    exitOnError = true;
-  }
 }
 
 module.exports = function (namespace) {
@@ -41,5 +17,23 @@ module.exports = function (namespace) {
   Assert(namespace && isString(namespace), 'must provide namespace');
   level = process.env.LOG_LEVEL || 'info'; // eslint-disable-line no-process-env
 
-  return Factory(namespace, level, exitOnError);
+  return Factory(namespace, level, !exceptionLogger);
+};
+
+module.exports.writeExceptions = function (path) {
+  Assert(path && isString(path), 'must provide a file path');
+
+  // TODO use FS.accessSync(path, FS.F_OK | FS.W_OK), node > 4.0
+  FS.appendFileSync(path, ''); // eslint-disable-line no-sync
+
+  exceptionLogger = new Winston.Logger({
+    transports: [
+      new Winston.transports.File({
+        exitOnError: true,
+        filename: path,
+        handleExceptions: true,
+        humanReadableUnhandledException: true
+      })
+    ]
+  });
 };

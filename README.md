@@ -35,7 +35,38 @@ variable `LOG_LEVEL`.
 ### Exceptions
 
 All uncaught exceptions are automatically logged to `stderr` and the process is
-exited. There is no need to add an additional handler.
+exited. There is no need to add an additional handler. If you would like to
+enable the additional behavior of writing all exceptions to a file, you can!
+
+```
+const Logger = require('@modulus/logger');
+
+Logger.writeExceptions(PATH);
+
+// you can still use the factory to get a logger instance for this file
+var logger = Logger('namespace');
+logger.info('message', { example: true });
+```
+
+Note, you must use the required module directly, and create a logger instance
+separately. You typically only need to do this in your main file, so the
+additional overhead is minimal.
+
+#### Pre-exit procedure
+
+You can also provide an synchronous function to call before exiting the process
+as a second parameter to `writeExceptions`, which should return a `Boolean`.
+
+```
+const Logger = require('@modulus/logger');
+
+function exitOnError(exception) {
+  // perform pre-exit process
+  return true; // you could choose to not exit, based on the exception
+}
+
+Logger.writeExceptions(PATH, exitOnError);
+```
 
 [winston]: https://www.npmjs.com/package/winston
 [debug]: https://www.npmjs.com/package/debug
