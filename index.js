@@ -20,7 +20,7 @@ module.exports = function (namespace) {
   return Factory(namespace, level, !exceptionLogger);
 };
 
-module.exports.writeExceptions = function (path) {
+module.exports.writeExceptions = function (path, exitOnError) {
   Assert(path && isString(path), 'must provide a file path');
 
   // TODO use FS.accessSync(path, FS.F_OK | FS.W_OK), node > 4.0
@@ -29,7 +29,7 @@ module.exports.writeExceptions = function (path) {
   exceptionLogger = new Winston.Logger({
     transports: [
       new Winston.transports.File({
-        exitOnError: true,
+        exitOnError: exitOnError,
         filename: path,
         handleExceptions: true,
         humanReadableUnhandledException: true
