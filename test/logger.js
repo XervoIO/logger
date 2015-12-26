@@ -41,7 +41,7 @@ describe('Logger', function () {
   it('requires a namespace', function (done) {
     fn = function () {
       Logger();
-    }
+    };
 
     expect(fn).to.throw('must provide namespace');
     done();
@@ -51,7 +51,7 @@ describe('Logger', function () {
     [void 0, null, [], {}, Function.prototype].forEach(function (el) {
       fn = function () {
         Logger(el);
-      }
+      };
       expect(fn).to.throw('must provide namespace');
     });
     done();
@@ -96,7 +96,7 @@ describe('Logger', function () {
     it('requires a path', function (done) {
       fn = function () {
         Logger.writeExceptions();
-      }
+      };
 
       expect(fn).to.throw('must provide a file path');
       done();
@@ -106,7 +106,7 @@ describe('Logger', function () {
       [void 0, null, [], {}, Function.prototype].forEach(function (el) {
         fn = function () {
           Logger.writeExceptions(el);
-        }
+        };
         expect(fn).to.throw('must provide a file path');
       });
       done();
@@ -125,7 +125,7 @@ describe('Logger', function () {
 
       beforeEach(function (done) {
         logPath = Path.join(OS.tmpdir(), 'exception.log');
-        process.env.EXCEPTION_LOG = logPath; // eslint-disable-line no-process-env
+        process.env.EXCEPTION_LOG = logPath; // eslint-disable-line no-process-env, max-len
         Sinon.stub(process, 'exit');
 
         FS.writeFile(logPath, null, function (err) {
