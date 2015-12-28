@@ -11,11 +11,11 @@ var beforeEach = lab.beforeEach;
 var expect = Code.expect;
 
 describe('Formatter', function () {
-  var namespace, timestamp, data
+  var namespace, timestamp, data;
 
   beforeEach(function (done) {
     namespace = 'test';
-    timestamp = new Date().toISOString()
+    timestamp = new Date().toISOString();
     data = {
       timestamp: Sinon.stub().returns(timestamp),
       level: 'info',
@@ -38,7 +38,7 @@ describe('Formatter', function () {
   });
 
   describe('format', function () {
-    var out
+    var out;
 
     beforeEach(function (done) {
       out = Formatter(namespace, data);
@@ -68,7 +68,7 @@ describe('Formatter', function () {
     describe('when called without a message', function () {
       beforeEach(function (done) {
         delete data.message;
-        done()
+        done();
       });
 
       it('returns a string', function (done) {
@@ -86,7 +86,7 @@ describe('Formatter', function () {
     describe('when called without metadata', function () {
       beforeEach(function (done) {
         delete data.meta;
-        done()
+        done();
       });
 
       it('returns a string', function (done) {
