@@ -1,3 +1,4 @@
+const Clone = require('lodash.clone');
 const Code = require('code');
 const Lab = require('lab');
 const Sinon = require('sinon');
@@ -12,11 +13,18 @@ var afterEach = lab.afterEach;
 var beforeEach = lab.beforeEach;
 var expect = Code.expect;
 
+const ENV = Clone(process.env, true); // eslint-disable-line no-process-env
+
 describe('Factory', function () {
   var logger, stdio;
 
   beforeEach(function (done) {
     logger = Factory('test', 'debug');
+    done();
+  });
+
+  afterEach(function (done) {
+    process.env = Clone(ENV, true); // eslint-disable-line no-process-env
     done();
   });
 
@@ -94,27 +102,51 @@ describe('Factory', function () {
     });
 
     describe('exceptions', function () {
-      beforeEach(function (done) {
-        Sinon.stub(process, 'exit');
-
-        StdMocks.use();
-        process.emit('uncaughtException', new Error('uncaught'));
-        StdMocks.restore();
-        stdio = StdMocks.flush();
-
-        done();
-      });
-
       afterEach(function (done) {
         process.exit.restore();
         done();
       });
 
-      it('prints to stderr', function (done) {
-        var log = stdio.stderr.pop();
-        expect(log).to.contain('uncaughtException');
-        expect(log).to.contain('Error: uncaught');
-        done();
+      describe('when in production environment', function () {
+        beforeEach(function (done) {
+          process.env.NODE_ENV = 'production'; // eslint-disable-line no-process-env
+
+          Sinon.stub(process, 'exit');
+
+          StdMocks.use();
+          process.emit('uncaughtException', new Error('uncaught'));
+          StdMocks.restore();
+          stdio = StdMocks.flush();
+
+          done();
+        });
+
+        it('prints to stderr', function (done) {
+          var log = stdio.stderr.pop();
+          expect(log).to.contain('uncaughtException');
+          expect(log).to.not.match(/logger\/test\/factory.js:(?:\d+):(?:\d+)\n/);
+          done();
+        });
+      });
+
+      describe('when not in production environment', function () {
+        beforeEach(function (done) {
+          Sinon.stub(process, 'exit');
+
+          StdMocks.use();
+          process.emit('uncaughtException', new Error('uncaught'));
+          StdMocks.restore();
+          stdio = StdMocks.flush();
+
+          done();
+        });
+
+        it('prints to stderr with stack trace', function (done) {
+          var log = stdio.stderr.pop();
+          expect(log).to.contain('uncaughtException');
+          expect(log).to.match(/logger\/test\/factory.js:(?:\d+):(?:\d+)\n/);
+          done();
+        });
       });
     });
   });
