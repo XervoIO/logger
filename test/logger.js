@@ -131,7 +131,7 @@ describe('Logger', function () {
         FS.writeFile(logPath, null, function (err) {
           if (err) return done(err);
 
-          FS.access(logPath, FS.OK | FS.W_OK, function (err) {
+          return FS.access(logPath, FS.OK | FS.W_OK, function (err) {
             if (err) return done(err);
 
             Logger.writeExceptions(logPath);
@@ -141,7 +141,7 @@ describe('Logger', function () {
             StdMocks.restore();
             StdMocks.flush();
 
-            done();
+            return done();
           });
         });
       });
@@ -164,7 +164,7 @@ describe('Logger', function () {
 
             expect(log).to.contain('uncaughtException');
             expect(log).to.contain('Error: uncaught');
-            done();
+            return done();
           });
         });
       });
