@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/onmodulus/logger#readme",
   "dependencies": {
-    "winston": "2.1.1"
+    "winston": "2.3.0"
   },
   "devDependencies": {
-    "code": "~1.5.0",
-    "lab": "~5.18.1",
-    "lodash.clone": "~3.0.3",
+    "code": "4.0.0",
+    "lab": "11.2.2",
+    "lodash.clone": "4.5.0",
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
     "standard": "8.6.0",
