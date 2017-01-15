@@ -1,30 +1,30 @@
-const Assert = require('assert');
-const FS = require('fs');
+const Assert = require('assert')
+const FS = require('fs')
 
-const Winston = require('winston');
+const Winston = require('winston')
 
-const Factory = require('./lib/factory');
+const Factory = require('./lib/factory')
 
-var exceptionLogger;
+var exceptionLogger
 
-function isString(str) {
-  return typeof str === 'string';
+function isString (str) {
+  return typeof str === 'string'
 }
 
 module.exports = function (namespace) {
-  var level;
+  var level
 
-  Assert(namespace && isString(namespace), 'must provide namespace');
-  level = process.env.LOG_LEVEL || 'info'; // eslint-disable-line no-process-env
+  Assert(namespace && isString(namespace), 'must provide namespace')
+  level = process.env.LOG_LEVEL || 'info' // eslint-disable-line no-process-env
 
-  return Factory(namespace, level, !exceptionLogger);
-};
+  return Factory(namespace, level, !exceptionLogger)
+}
 
 module.exports.writeExceptions = function (path, exitOnError) {
-  Assert(path && isString(path), 'must provide a file path');
+  Assert(path && isString(path), 'must provide a file path')
 
   // TODO use FS.accessSync(path, FS.F_OK | FS.W_OK), node > 4.0
-  FS.appendFileSync(path, ''); // eslint-disable-line no-sync
+  FS.appendFileSync(path, '') // eslint-disable-line no-sync
 
   exceptionLogger = new Winston.Logger({
     transports: [
@@ -35,5 +35,5 @@ module.exports.writeExceptions = function (path, exitOnError) {
         humanReadableUnhandledException: true
       })
     ]
-  });
-};
+  })
+}

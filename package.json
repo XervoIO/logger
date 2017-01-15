@@ -4,7 +4,7 @@
   "description": "Winston wrapper with simplified interface",
   "main": "index.js",
   "scripts": {
-    "lint": "mod-standard",
+    "lint": "standard",
     "test": "lab -c",
     "posttest": "npm run lint",
     "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info"
@@ -29,12 +29,12 @@
     "winston": "2.1.1"
   },
   "devDependencies": {
-    "@modulus/standard": "*",
     "code": "~1.5.0",
     "lab": "~5.18.1",
     "lodash.clone": "~3.0.3",
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
+    "standard": "8.6.0",
     "std-mocks": "~1.0.0"
   }
 }
