@@ -10,7 +10,6 @@
     "winston": "2.1.1"
   },
   "devDependencies": {
-    "@modulus/standard": "*",
     "code": "~1.5.0",
     "lab": "~5.18.1",
     "lodash.clone": "~3.0.3",
@@ -34,7 +33,7 @@
   },
   "scripts": {
     "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info",
-    "lint": "mod-standard",
+    "lint": "standard -v",
     "posttest": "npm run lint",
     "test": "lab -c"
   }
