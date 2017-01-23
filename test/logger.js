@@ -3,7 +3,6 @@ const Path = require('path')
 const OS = require('os')
 
 const Code = require('code')
-const Clone = require('lodash.clone')
 const Lab = require('lab')
 const Proxyquire = require('proxyquire')
 const Sinon = require('sinon')
@@ -22,14 +21,14 @@ var beforeEach = lab.beforeEach
 var afterEach = lab.afterEach
 var expect = Code.expect
 
-const ENV = Clone(process.env, true)
+const ENV = Object.assign({}, process.env)
 
 describe('Logger', function () {
   var fn
 
   afterEach(function (done) {
     factory.reset()
-    process.env = Clone(ENV, true)
+    process.env = Object.assign({}, ENV)
     done()
   })
 

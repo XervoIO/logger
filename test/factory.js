@@ -1,4 +1,3 @@
-const Clone = require('lodash.clone')
 const Code = require('code')
 const Lab = require('lab')
 const Sinon = require('sinon')
@@ -13,7 +12,7 @@ var afterEach = lab.afterEach
 var beforeEach = lab.beforeEach
 var expect = Code.expect
 
-const ENV = Clone(process.env, true)
+const ENV = Object.assign({}, process.env)
 
 describe('Factory', function () {
   var logger, stdio
@@ -24,7 +23,7 @@ describe('Factory', function () {
   })
 
   afterEach(function (done) {
-    process.env = Clone(ENV, true)
+    process.env = Object.assign({}, ENV)
     done()
   })
 
