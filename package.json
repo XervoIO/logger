@@ -16,6 +16,7 @@
     "lodash.clone": "~3.0.3",
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
+    "standard": "~8.6.0",
     "std-mocks": "~1.0.0"
   },
   "homepage": "https://github.com/XervoIO/logger#readme",
