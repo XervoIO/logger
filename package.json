@@ -18,6 +18,9 @@
     "standard": "~8.6.0",
     "std-mocks": "~1.0.0"
   },
+  "engines": {
+    "node": ">=4"
+  },
   "homepage": "https://github.com/XervoIO/logger#readme",
   "keywords": [
     "debug",
