@@ -1,40 +1,42 @@
 {
-  "name": "@modulus/logger",
-  "version": "1.2.0",
+  "name": "@xervo/logger",
   "description": "Winston wrapper with simplified interface",
-  "main": "index.js",
-  "scripts": {
-    "lint": "mod-standard",
-    "test": "lab -c",
-    "posttest": "npm run lint",
-    "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/onmodulus/logger.git"
-  },
-  "keywords": [
-    "logs",
-    "logger",
-    "exceptions",
-    "debug"
-  ],
-  "author": "Jack Boberg <jack@modulus.io> (https://modulus.io/)",
-  "license": "MIT",
+  "version": "1.2.0",
+  "author": "Jack Boberg <jack@hellotangible.com> (https://xervo.io/)",
   "bugs": {
-    "url": "https://github.com/onmodulus/logger/issues"
+    "url": "https://github.com/XervoIO/logger/issues"
   },
-  "homepage": "https://github.com/onmodulus/logger#readme",
   "dependencies": {
-    "winston": "2.1.1"
+    "winston": "2.3.1"
   },
   "devDependencies": {
-    "@modulus/standard": "*",
-    "code": "~1.5.0",
-    "lab": "~5.18.1",
-    "lodash.clone": "~3.0.3",
+    "code": "~4.0.0",
+    "lab": "~12.0.0",
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
+    "standard": "~8.6.0",
     "std-mocks": "~1.0.0"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "homepage": "https://github.com/XervoIO/logger#readme",
+  "keywords": [
+    "debug",
+    "exceptions",
+    "logger",
+    "logs"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XervoIO/logger.git"
+  },
+  "scripts": {
+    "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info",
+    "lint": "standard -v",
+    "posttest": "npm run lint",
+    "test": "lab -c"
   }
 }
