@@ -15,7 +15,8 @@
     "proxyquire": "~1.7.3",
     "sinon": "~1.17.2",
     "standard": "~8.6.0",
-    "std-mocks": "~1.0.0"
+    "std-mocks": "~1.0.0",
+    "tap": "~9.0.3"
   },
   "engines": {
     "node": ">=6"
