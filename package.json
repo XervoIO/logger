@@ -35,9 +35,9 @@
     "url": "git+https://github.com/XervoIO/logger.git"
   },
   "scripts": {
-    "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info",
+    "coverage": "npm run test -- --coverage-report=lcov",
     "lint": "standard -v",
     "posttest": "npm run lint",
-    "test": "lab -c"
+    "test": "tap test/*.js --cov"
   }
 }
