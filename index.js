@@ -1,39 +1,20 @@
-const Assert = require('assert')
+const Exceptions = require('./lib/exceptions')
 const FS = require('fs')
+const Logger = require('./lib/logger')
 
-const Winston = require('winston')
+const EXCEPTION_LOG = process.env.EXCEPTION_LOG
 
-const Factory = require('./lib/factory')
-
-var exceptionLogger
-
-function isString (str) {
-  return typeof str === 'string'
+// ensure file exists and is writeable
+const isWriteable = (path) => {
+  try {
+    FS.accessSync(path, FS.F_OK | FS.W_OK)
+    return true
+  } catch (err) {
+    return false
+  }
 }
 
-module.exports = function (namespace) {
-  var level
+const file = isWriteable(EXCEPTION_LOG) ? EXCEPTION_LOG : null
+Exceptions(file)
 
-  Assert(namespace && isString(namespace), 'must provide namespace')
-  level = process.env.LOG_LEVEL || 'info'
-
-  return Factory(namespace, level, !exceptionLogger)
-}
-
-module.exports.writeExceptions = function (path, exitOnError) {
-  Assert(path && isString(path), 'must provide a file path')
-
-  // TODO use FS.accessSync(path, FS.F_OK | FS.W_OK), node > 4.0
-  FS.appendFileSync(path, '')
-
-  exceptionLogger = new Winston.Logger({
-    transports: [
-      new Winston.transports.File({
-        exitOnError: exitOnError,
-        filename: path,
-        handleExceptions: true,
-        humanReadableUnhandledException: true
-      })
-    ]
-  })
-}
+module.exports = Logger(process.env.LOG_LEVEL || 'info')
