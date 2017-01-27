@@ -1,99 +1,51 @@
 const Code = require('code')
-const Lab = require('lab')
-const Sinon = require('sinon')
+const OS = require('os')
+const Tap = require('tap')
 
-const Formatter = require('../lib/formatter')
+const Formatter = require('../lib/formatter')('test')
 
-var lab = exports.lab = Lab.script()
-var describe = lab.describe
-var it = lab.it
-var beforeEach = lab.beforeEach
-var expect = Code.expect
+const { expect } = Code
 
-describe('Formatter', function () {
-  var namespace, timestamp, data
+const data = (props) => Object.assign({
+  level: 'info'
+}, props)
 
-  beforeEach(function (done) {
-    namespace = 'test'
-    timestamp = new Date().toISOString()
-    data = {
-      timestamp: Sinon.stub().returns(timestamp),
-      level: 'info',
-      message: 'example message',
-      meta: { test: true }
-    }
+const isISOString = (str) => new Date(str).toISOString() === str
 
-    done()
-  })
+Tap.test('includes datetime', (test) => {
+  const timestamp = Formatter(data()).split(' ')[0]
+  expect(isISOString(timestamp)).to.be.a.be.true()
+  test.end()
+})
 
-  it('exports a function', function (done) {
-    expect(Formatter).to.be.a.function()
-    done()
-  })
+Tap.test('includes uppercased level', (test) => {
+  const namespace = Formatter(data()).split(' ')[1]
+  expect(namespace).to.be.equal('INFO')
+  test.end()
+})
 
-  it('returns a string', function (done) {
-    var out = Formatter(namespace, data)
-    expect(out).to.be.a.string()
-    done()
-  })
+Tap.test('includes namespace', (test) => {
+  const namespace = Formatter(data()).split(' ')[2]
+  expect(namespace).to.be.equal('test')
+  test.end()
+})
 
-  describe('format', function () {
-    var out
+Tap.test('includes message (if provided)', (test) => {
+  const message = Formatter(data({ message: 'hello' })).split(' ')[3]
+  expect(message).to.be.equal('hello')
+  test.end()
+})
 
-    beforeEach(function (done) {
-      out = Formatter(namespace, data)
-      done()
-    })
+Tap.test('includes metadata (if provided)', (test) => {
+  const meta = { obj: true, nest: [ 1, 2, { 3: true } ] }
+  const out = Formatter(data({ meta })).split(' ')[3]
+  expect(out).to.be.equal('{"obj":true,"nest":[1,2,{"3":true}]}')
+  test.end()
+})
 
-    it('contains the timestamp', function (done) {
-      expect(out.split(' ')[0]).to.equal(timestamp)
-      done()
-    })
-
-    it('contains the level, uppercased', function (done) {
-      expect(out.split(' ')[1]).to.equal('INFO')
-      done()
-    })
-
-    it('contains the namespace', function (done) {
-      expect(out.split(' ')[2]).to.equal('test')
-      done()
-    })
-
-    it('contains the message', function (done) {
-      expect(out).to.contain('example message')
-      done()
-    })
-
-    describe('when called without a message', function () {
-      beforeEach(function (done) {
-        delete data.message
-        done()
-      })
-
-      it('returns a string', function (done) {
-        out = Formatter(namespace, data)
-        expect(out).to.be.string()
-        done()
-      })
-    })
-
-    it('contains the stringified metadata', function (done) {
-      expect(out).to.contain('{"test":true}')
-      done()
-    })
-
-    describe('when called without metadata', function () {
-      beforeEach(function (done) {
-        delete data.meta
-        done()
-      })
-
-      it('returns a string', function (done) {
-        out = Formatter(namespace, data)
-        expect(out).to.be.string()
-        done()
-      })
-    })
-  })
+Tap.test('includes stack if exception', (test) => {
+  const meta = { stack: [ 'one', 'two' ] }
+  const out = Formatter(data({ message: 'uncaughtException: test', meta }))
+  expect(out).to.be.contain(`${OS.EOL}one${OS.EOL}two`)
+  test.end()
 })
