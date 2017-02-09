@@ -11,14 +11,11 @@
   },
   "devDependencies": {
     "code": "~4.0.0",
-    "lab": "~12.0.0",
-    "proxyquire": "~1.7.3",
-    "sinon": "~1.17.2",
     "standard": "~8.6.0",
-    "std-mocks": "~1.0.0"
+    "tap": "~9.0.3"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "homepage": "https://github.com/XervoIO/logger#readme",
   "keywords": [
@@ -34,9 +31,9 @@
     "url": "git+https://github.com/XervoIO/logger.git"
   },
   "scripts": {
-    "coverage": "lab -r html -o coverage/index.html -r lcov -o coverage/lcov.info",
+    "coverage": "npm run test -- --coverage-report=lcov",
     "lint": "standard -v",
     "posttest": "npm run lint",
-    "test": "lab -c"
+    "test": "tap test/*.js --cov"
   }
 }

@@ -1,193 +1,53 @@
-const FS = require('fs')
-const Path = require('path')
-const OS = require('os')
-
 const Code = require('code')
-const Lab = require('lab')
-const Proxyquire = require('proxyquire')
-const Sinon = require('sinon')
-const StdMocks = require('std-mocks')
+const Tap = require('tap')
+const Winston = require('winston')
 
-var mock = { logger: true }
-var factory = Sinon.stub().returns(mock)
-const Logger = Proxyquire('..', {
-  './lib/factory': factory
+const Logger = require('../lib/logger')
+
+const { expect } = Code
+
+const cleanup = (test) => {
+  Winston.loggers.close('test')
+  test.end()
+}
+
+Tap.test('returns a factory', (test) => {
+  const factory = Logger('info')
+  expect(factory).to.be.a.function()
+  test.end()
 })
 
-var lab = exports.lab = Lab.script()
-var describe = lab.describe
-var it = lab.it
-var beforeEach = lab.beforeEach
-var afterEach = lab.afterEach
-var expect = Code.expect
+Tap.test('requires a valid log level', (test) => {
+  const valid = [ 'error', 'warn', 'info', 'verbose', 'debug', 'silly' ]
+  const invalid = [ 'nope', 1 ]
+  const wrapLogger = (level) => () => Logger(level)
 
-const ENV = Object.assign({}, process.env)
+  valid.map(wrapLogger).every((fn) => expect(fn).to.not.throw())
+  invalid.map(wrapLogger)
+    .every((fn) => expect(fn).to.throw(Error, 'must provide valid level'))
+  test.end()
+})
 
-describe('Logger', function () {
-  var fn
+Tap.test('requires a valid namespace', (test) => {
+  const valid = [ 'test' ]
+  const invalid = [ 1, [], undefined, {} ]
+  const wrapLogger = (namespace) => () => Logger('debug')(namespace)
 
-  afterEach(function (done) {
-    factory.reset()
-    process.env = Object.assign({}, ENV)
-    done()
-  })
+  valid.map(wrapLogger).every((fn) => expect(fn).to.not.throw())
+  invalid.map(wrapLogger)
+    .every((fn) => expect(fn).to.throw(Error, 'must provide valid namespace'))
+  test.end()
+})
 
-  it('exports a function', function (done) {
-    expect(Logger).to.be.a.function()
-    done()
-  })
+Tap.test('returns a Winston logger', (test) => {
+  const logger = Logger('debug')('test')
+  expect(logger).to.be.instanceOf(Winston.Logger)
+  cleanup(test)
+})
 
-  it('requires a namespace', function (done) {
-    fn = function () {
-      Logger()
-    }
-
-    expect(fn).to.throw('must provide namespace')
-    done()
-  })
-
-  it('namespace must be string', function (done) {
-    [void 0, null, [], {}, Function.prototype].forEach(function (el) {
-      fn = function () {
-        Logger(el)
-      }
-      expect(fn).to.throw('must provide namespace')
-    })
-    done()
-  })
-
-  it('returns a logger instance', function (done) {
-    var instance = Logger('test')
-    expect(factory.calledWith('test')).to.be.true()
-    expect(instance).to.equal(mock)
-    done()
-  })
-
-  describe('log level', function () {
-    describe('when environment variable is not present', function () {
-      beforeEach(function (done) {
-        delete process.env.LOG_LEVEL
-        done()
-      })
-
-      it('defaults to "info"', function (done) {
-        Logger('namespace')
-        expect(factory.calledWith('namespace', 'info')).to.be.true()
-        done()
-      })
-    })
-
-    describe('when environment variable is present', function () {
-      beforeEach(function (done) {
-        process.env.LOG_LEVEL = 'test'
-        done()
-      })
-
-      it('uses it', function (done) {
-        Logger('namespace')
-        expect(factory.calledWith('namespace', 'test')).to.be.true()
-        done()
-      })
-    })
-  })
-
-  describe('writeExceptions', function () {
-    it('requires a path', function (done) {
-      fn = function () {
-        Logger.writeExceptions()
-      }
-
-      expect(fn).to.throw('must provide a file path')
-      done()
-    })
-
-    it('path must be string', function (done) {
-      [void 0, null, [], {}, Function.prototype].forEach(function (el) {
-        fn = function () {
-          Logger.writeExceptions(el)
-        }
-        expect(fn).to.throw('must provide a file path')
-      })
-      done()
-    })
-
-    describe('when no exception log is not set', function () {
-      it('creates loggers that exit on exceptions', function (done) {
-        Logger('namespace')
-        expect(factory.lastCall.args.pop()).to.be.true()
-        done()
-      })
-    })
-
-    describe('when exception log is set', function () {
-      var logPath
-
-      beforeEach(function (done) {
-        logPath = Path.join(OS.tmpdir(), 'exception.log')
-        process.env.EXCEPTION_LOG = logPath
-        Sinon.stub(process, 'exit')
-
-        FS.writeFile(logPath, null, function (err) {
-          if (err) return done(err)
-
-          FS.access(logPath, FS.OK | FS.W_OK, function (err) {
-            if (err) return done(err)
-
-            Logger.writeExceptions(logPath)
-
-            StdMocks.use()
-            process.emit('uncaughtException', new Error('uncaught'))
-            StdMocks.restore()
-            StdMocks.flush()
-
-            done()
-          })
-        })
-      })
-
-      afterEach(function (done) {
-        process.exit.restore()
-        FS.unlink(logPath, done)
-      })
-
-      it('creates loggers that do not exit on exceptions', function (done) {
-        Logger('namespace')
-        expect(factory.lastCall.args.pop()).to.be.false()
-        done()
-      })
-
-      describe('when log is writeable', function () {
-        it('writes exceptions to file', function (done) {
-          FS.readFile(logPath, 'utf8', function (err, log) {
-            if (err) return done(err)
-
-            expect(log).to.contain('uncaughtException')
-            expect(log).to.contain('Error: uncaught')
-            done()
-          })
-        })
-      })
-
-      describe('when log is not writeable', function () {
-        beforeEach(function (done) {
-          Sinon.stub(FS, 'appendFileSync').throws()
-          done()
-        })
-
-        afterEach(function (done) {
-          FS.appendFileSync.restore()
-          done()
-        })
-
-        it('throws an exception', function (done) {
-          fn = function () {
-            Logger.writeExceptions(logPath)
-          }
-
-          expect(fn).to.throw()
-          done()
-        })
-      })
-    })
-  })
+Tap.test('writes to the console', (test) => {
+  const { transports } = Logger('debug')('test')
+  expect(Object.keys(transports).length).to.equal(1)
+  expect(transports.console).to.exist()
+  cleanup(test)
 })
