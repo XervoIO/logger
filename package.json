@@ -1,7 +1,7 @@
 {
   "name": "@xervo/logger",
   "description": "Winston wrapper with simplified interface",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "author": "Jack Boberg <jack@hellotangible.com> (https://xervo.io/)",
   "bugs": {
     "url": "https://github.com/XervoIO/logger/issues"
